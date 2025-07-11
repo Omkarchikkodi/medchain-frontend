@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
+import { AuthContext } from '../AuthContext'; // 👈 add this
 
 const API_BASE = "https://medchain-backend-clean.onrender.com";
+const { user } = useContext(AuthContext);
 
 const ViewMedicines = () => {
+  const { user } = useContext(AuthContext);
   const [ledger, setLedger] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -125,6 +128,29 @@ const ViewMedicines = () => {
 
                   </div>
                 )}
+
+                {user.role === "distributor" && (
+                  <button
+                    className="mt-3 w-full bg-orange-600 text-white p-2 rounded hover:bg-orange-700"
+                    onClick={() => {
+                      const newLocation = prompt("Enter new location to update tracking:");
+                      if (!newLocation) return;
+                      axios.post(`${API_BASE}/update-location`, {
+                        batch: entry.medicine.batch,
+                        location: newLocation
+                      }).then(() => {
+                        alert("Location updated!");
+                        window.location.reload();
+                      }).catch(err => {
+                        alert("Error updating location");
+                        console.error(err);
+                      });
+                    }}
+                  >
+                    🚚 Update Location
+                  </button>
+                )}
+
               </div>
             </div>
           );
