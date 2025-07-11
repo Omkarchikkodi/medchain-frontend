@@ -16,9 +16,11 @@ const Dashboard = () => {
       {user.role === 'manufacturer' && (
         <button onClick={() => navigate('/register')}>Register Medicine</button>
       )}
+      {user.role === 'manufacturer' && (
+      <button onClick={() => navigate('/predict')}>Predict Stock</button>
+      )}
 
       <button onClick={() => navigate('/view')}>View Medicines</button>
-      <button onClick={() => navigate('/predict')}>Predict Stock</button>
       <button onClick={() => { fakeAuth.logout(); navigate('/'); }}>Logout</button>
     </div>
   );
