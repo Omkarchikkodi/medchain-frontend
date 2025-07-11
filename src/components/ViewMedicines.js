@@ -67,6 +67,20 @@ const ViewMedicines = () => {
                 <QRCodeCanvas value={qrData} size={128} />
                 <p className="text-xs text-gray-600 mt-2">Scan to verify</p>
               </div>
+              {entry.tracking && (
+                <div className="mt-4 text-sm text-left">
+                  <h4 className="font-semibold text-sm">📍 Tracking History:</h4>
+                  <ul className="text-sm text-gray-700 list-disc list-inside">
+                    {entry.tracking.map((t, i) => (
+                      <li key={i}>{t.location} – {t.timestamp}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-sm font-medium">
+                    ETA: {entry.eta || "Unknown"} | Status: {entry.status || "In Transit"}
+                  </p>
+                </div>
+              )}
+
 
               <div className="mt-4">
                 {selectedIndex === idx ? (
@@ -116,6 +130,7 @@ const ViewMedicines = () => {
           );
         })}
       </div>
+
     </div>
   );
 };
