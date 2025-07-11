@@ -12,7 +12,7 @@ const Dashboard = ({ user }) => {
         {user?.role === 'manufacturer' && (
           <>
             <button onClick={() => navigate('/register')} className="bg-blue-500 text-white p-4 rounded shadow hover:bg-blue-600">Register Medicine</button>
-            <button onClick={() => navigate('/predict')} className="bg-purple-500 text-white p-4 rounded shadow hover:bg-purple-600">Predict Stock</button>
+            {/* <button onClick={() => navigate('/predict')} className="bg-purple-500 text-white p-4 rounded shadow hover:bg-purple-600">Predict Stock</button> */}
           </>
         )}
         {user.role === 'hospital' && (
