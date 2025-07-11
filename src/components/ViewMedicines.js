@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
 
+const API_BASE = "https://medchain-backend-clean.onrender.com";
+
 const ViewMedicines = () => {
   const [ledger, setLedger] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ const ViewMedicines = () => {
   const handlePredict = async (index) => {
     const stockHistory = stockInput.split(',').map(n => parseInt(n.trim()));
     try {
-      const res = await axios.post("https://medchain-backend-clean.onrender.com/predict", stockHistory);
+      const res = await axios.post(`${API_BASE}/predict`, stockHistory);
       setPredictionResult({ ...predictionResult, [index]: res.data });
     } catch (err) {
       alert("Prediction failed.");
