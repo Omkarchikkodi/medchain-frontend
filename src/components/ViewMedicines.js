@@ -24,7 +24,7 @@ const ViewMedicines = () => {
   const handlePredict = async (index) => {
     const stockHistory = stockInput.split(',').map(n => parseInt(n.trim()));
     try {
-      const res = await axios.post("http://127.0.0.1:8000/predict", stockHistory);
+      const res = await axios.post("https://medchain-backend-clean.onrender.com/predict", stockHistory);
       setPredictionResult({ ...predictionResult, [index]: res.data });
     } catch (err) {
       alert("Prediction failed.");
