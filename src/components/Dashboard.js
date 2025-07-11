@@ -16,7 +16,7 @@ const Dashboard = () => {
       {user.role === 'manufacturer' && (
         <button onClick={() => navigate('/register')}>Register Medicine</button>
       )}
-      {user.role === 'manufacturer' && (
+      {user?.role === 'manufacturer' && (
       <button onClick={() => navigate('/predict')}>Predict Stock</button>
       )}
 
