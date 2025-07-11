@@ -10,7 +10,7 @@ const ViewMedicines = () => {
   const [predictionResult, setPredictionResult] = useState({});
 
   useEffect(() => {
-    axios.get("https://medchain-backend-clean.onrender.com")
+    axios.get("https://medchain-backend-clean.onrender.com/ledger")
       .then(res => {
         setLedger(res.data);
         setLoading(false);
