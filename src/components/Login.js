@@ -7,8 +7,12 @@ const Login = ({ setUser }) => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    const user = { email, role };
-    setUser(user);
+    if (email.trim() === '') {
+      alert('Please enter your email');
+      return;
+    }
+
+    setUser({ email, role });  // Pass both email and role
     navigate('/dashboard');
   };
 
