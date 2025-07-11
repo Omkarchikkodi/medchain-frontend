@@ -12,16 +12,16 @@ const ViewMedicines = () => {
   const [predictionResult, setPredictionResult] = useState({});
 
   useEffect(() => {
-    axios.get("https://medchain-backend-clean.onrender.com/ledger")
-      .then(res => {
-        setLedger(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching ledger", err);
-        setLoading(false);
-      });
-  }, []);
+  axios.get("https://medchain-backend-clean.onrender.com/ledger")
+    .then(res => {
+      setLedger(res.data);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error("Error fetching ledger", err);
+      setLoading(false);
+    });
+}, []);
 
   const handlePredict = async (index) => {
     const stockHistory = stockInput.split(',').map(n => parseInt(n.trim()));
@@ -35,65 +35,75 @@ const ViewMedicines = () => {
   };
 
   const getCardColor = (prediction) => {
-    if (!prediction) return "#f0f0f0"; // default gray
-    if (prediction.predicted_stock > 50) return "#e6ffed"; // green
-    if (prediction.predicted_stock > 20) return "#fffbe6"; // orange
-    return "#ffe6e6"; // red
+    if (!prediction) return "bg-gray-100";
+    if (prediction.predicted_stock > 50) return "bg-green-100";
+    if (prediction.predicted_stock > 20) return "bg-yellow-100";
+    return "bg-red-100";
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (ledger.length === 0) return <p>No medicines found.</p>;
+  if (loading) return <p className="text-center mt-10 text-lg">Loading...</p>;
+  if (ledger.length === 0) return <p className="text-center mt-10 text-lg">No medicines found.</p>;
 
   return (
-    <div>
-      <h3>Medicine Records with QR, Prediction & Status</h3>
-      {ledger.map((entry, idx) => {
-        const qrData = `${entry.medicine.name}|${entry.medicine.batch}|${entry.medicine.expiry}|${entry.hash}`;
-        const prediction = predictionResult[idx];
-        const bgColor = getCardColor(prediction);
+    <div className="p-6">
+      <h3 className="text-2xl font-semibold mb-6 text-center">Medicine Records</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {ledger.map((entry, idx) => {
+          const qrData = `${entry.medicine.name}|${entry.medicine.batch}|${entry.medicine.expiry}|${entry.hash}`;
+          const prediction = predictionResult[idx];
+          const bgColor = getCardColor(prediction);
 
-        return (
-          <div key={idx} style={{
-            border: "1px solid #ccc",
-            marginBottom: "15px",
-            padding: "15px",
-            backgroundColor: bgColor,
-            borderRadius: "8px"
-          }}>
-            <p><strong>Name:</strong> {entry.medicine.name}</p>
-            <p><strong>Batch:</strong> {entry.medicine.batch}</p>
-            <p><strong>Expiry:</strong> {entry.medicine.expiry}</p>
-            <p><strong>Hash:</strong> <code>{entry.hash}</code></p>
-            <div style={{ marginTop: '10px' }}>
-              <QRCodeCanvas value={qrData} size={150} />
-              <p style={{ fontSize: '12px' }}>Scan to verify</p>
+          return (
+            <div key={idx} className={`rounded-lg shadow-md p-5 border ${bgColor}`}>
+              <p><strong>Name:</strong> {entry.medicine.name}</p>
+              <p><strong>Batch:</strong> {entry.medicine.batch}</p>
+              <p><strong>Expiry:</strong> {entry.medicine.expiry}</p>
+              <p className="break-all"><strong>Hash:</strong> <code>{entry.hash}</code></p>
+
+              <div className="mt-4 flex flex-col items-center">
+                <QRCodeCanvas value={qrData} size={128} />
+                <p className="text-xs text-gray-600 mt-2">Scan to verify</p>
+              </div>
+
+              <div className="mt-4">
+                {selectedIndex === idx ? (
+                  <>
+                    <input
+                      className="w-full p-2 border rounded mb-2"
+                      placeholder="Enter past stock (e.g. 100,80,65)"
+                      value={stockInput}
+                      onChange={e => setStockInput(e.target.value)}
+                    />
+                    <button
+                      onClick={() => handlePredict(idx)}
+                      className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                    >
+                      Predict
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setSelectedIndex(idx)}
+                    className="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700"
+                  >
+                    📉 Predict Stock
+                  </button>
+                )}
+
+                {prediction && (
+                  <div className="mt-4 text-sm">
+                    <p><strong>Predicted Stock:</strong> {prediction.predicted_stock}</p>
+                    <p><strong>Status:</strong> {prediction.message}</p>
+                    {prediction.alert && (
+                      <p className="text-red-600 font-bold">⚠️ Refill required soon!</p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-
-            <div style={{ marginTop: '10px' }}>
-              {selectedIndex === idx ? (
-                <>
-                  <input
-                    placeholder="Enter past stock (e.g. 100,80,65)"
-                    value={stockInput}
-                    onChange={e => setStockInput(e.target.value)}
-                  />
-                  <button onClick={() => handlePredict(idx)}>Predict</button>
-                </>
-              ) : (
-                <button onClick={() => setSelectedIndex(idx)}>📉 Predict Stock</button>
-              )}
-
-              {prediction && (
-                <div style={{ marginTop: '10px' }}>
-                  <p><strong>Predicted Stock:</strong> {prediction.predicted_stock}</p>
-                  <p><strong>Status:</strong> {prediction.message}</p>
-                  {prediction.alert && <p style={{ color: 'red' }}>⚠️ Refill required soon!</p>}
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
